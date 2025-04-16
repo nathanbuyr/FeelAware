@@ -1,13 +1,17 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>entry-detail</ion-title>
+    <ion-title>Log Details</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">entry-detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <h2>{{ entry.date }}</h2>
+  <p>Mood: {{ entry.mood }}</p>
+
+  <ion-item lines="full">
+    <ion-label position="stacked">Write about your day</ion-label>
+    <ion-textarea [(ngModel)]="reflection" placeholder="It was a good day because..."></ion-textarea>
+  </ion-item>
+
+  <ion-button expand="block" (click)="saveEntry()">Save</ion-button>
 </ion-content>

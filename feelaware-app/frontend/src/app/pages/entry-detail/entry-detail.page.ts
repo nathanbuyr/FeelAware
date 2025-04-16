@@ -1,20 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-entry-detail',
-  templateUrl: './entry-detail.page.html',
-  styleUrls: ['./entry-detail.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule],
+  templateUrl: './entry-detail.page.html',
+  styleUrls: ['./entry-detail.page.scss']
 })
-export class EntryDetailPage implements OnInit {
+export class EntryDetailPage {
+  entry: any;
+  reflection: string = '';
 
-  constructor() { }
-
-  ngOnInit() {
+  constructor(private router: Router) {
+    const nav = this.router.getCurrentNavigation();
+    this.entry = nav?.extras.state?.['entry'] || {};
   }
 
+  saveEntry() {
+    console.log('Saved reflection:', this.reflection);
+  }
 }

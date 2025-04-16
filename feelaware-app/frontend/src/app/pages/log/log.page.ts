@@ -1,20 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-log',
-  templateUrl: './log.page.html',
-  styleUrls: ['./log.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, RouterModule],
+  templateUrl: './log.page.html',
+  styleUrls: ['./log.page.scss']
 })
-export class LogPage implements OnInit {
+export class LogPage {
+  moodLogs = [
+    { id: 1, date: '2025-04-14', mood: '😀 Happy' },
+    { id: 2, date: '2025-04-13', mood: '😢 Sad' },
+    { id: 3, date: '2025-04-12', mood: '😴 Tired' },
+  ];
 
-  constructor() { }
+  constructor(private router: Router) {}
 
-  ngOnInit() {
+  openLogDetail(entry: any) {
+    this.router.navigate(['/entry-detail'], { state: { entry } });
   }
-
 }
