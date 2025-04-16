@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
-import { IonButton } from '@ionic/angular/standalone';
+import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { NgFor } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
-  imports: [IonGrid, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonRow, IonCol, NgFor],
+  imports: [IonicModule, CommonModule, RouterModule],
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss']
 })
 export class HomePage {
   moods = [
@@ -21,10 +22,36 @@ export class HomePage {
     { emoji: '😍', label: 'Loved' }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private alertCtrl: AlertController, private router: Router) {}
 
-  selectMood(mood: any) {
-    console.log('Selected mood:', mood);
-    this.router.navigate(['/log'], { queryParams: { mood: mood.label } });
+  async openMoodSelector() {
+    const buttons = this.moods.map(mood => ({
+      text: `${mood.emoji} ${mood.label}`,
+      handler: () => this.thankUser(mood)
+    }));
+
+    const alert = await this.alertCtrl.create({
+      header: 'How are you feeling?',
+      buttons,
+    });
+
+    await alert.present();
+  }
+
+  async thankUser(mood: any) {
+    const thankYou = await this.alertCtrl.create({
+      header: `Thanks for checking in 🙇‍♂️`,
+      message: `You selected <strong>${mood.label}</strong>.`,
+      buttons: [
+        {
+          text: 'Check Entries',  
+          handler: () => {
+            this.router.navigate(['/log']);
+          }
+        }
+      ]
+    });
+
+    await thankYou.present();
   }
 }
