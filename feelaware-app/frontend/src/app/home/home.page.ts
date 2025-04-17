@@ -20,7 +20,8 @@ export class HomePage {
     { emoji: '😠', label: 'Angry' },
     { emoji: '😰', label: 'Anxious' },
     { emoji: '😴', label: 'Tired' },
-    { emoji: '😍', label: 'Loved' }
+    { emoji: '😍', label: 'Loved' },
+    { emoji: '🤔', label: "I'm not sure!", redirect: '/mood-decider' }
   ];
 
   constructor(
@@ -30,16 +31,22 @@ export class HomePage {
   ) {}
 
   async openMoodSelector() {
-    const buttons = this.moods.map((mood) => ({
+    const buttons = this.moods.map(mood => ({
       text: `${mood.emoji} ${mood.label}`,
-      handler: () => this.thankUser(mood)
+      handler: () => {
+        if (mood.redirect) {
+          this.router.navigate([mood.redirect]);
+        } else {
+          this.thankUser(mood);
+        }
+      }
     }));
-
+  
     const alert = await this.alertCtrl.create({
       header: 'How are you feeling?',
       buttons,
     });
-
+  
     await alert.present();
   }
 
