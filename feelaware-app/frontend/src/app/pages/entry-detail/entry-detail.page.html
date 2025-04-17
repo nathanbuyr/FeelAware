@@ -1,5 +1,8 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/log"></ion-back-button>
+    </ion-buttons>
     <ion-title>Log Details</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -7,6 +10,7 @@
 <ion-content class="ion-padding">
   <h2>{{ entry.date }}</h2>
   <p>Mood: {{ entry.mood }}</p>
+  <p>Reflection: {{ entry.reflection }}</p>
 
   <ion-item lines="full">
     <ion-label position="stacked">Write about your day</ion-label>

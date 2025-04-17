@@ -24,14 +24,16 @@ export class EntryDetailPage {
 
   // Save the reflection for the selected entry
   saveEntry() {
-    const updatedEntry = { reflection: this.reflection };
-    this.http.put(`http://localhost:4000/api/moods/${this.entry._id}`, updatedEntry).subscribe(
-      (data) => {
-        console.log('Reflection saved:', data);
-      },
-      (error) => {
-        console.error('Error saving reflection:', error);
-      }
-    );
+    const updatedEntry = { ...this.entry, reflection: this.reflection };
+    this.http.put(`http://localhost:4000/api/moods/${this.entry._id}`, updatedEntry)
+      .subscribe(
+        () => {
+          // Navigate back to the log page after saving
+          this.router.navigate(['/log']);
+        },
+        (error) => {
+          console.error('Error saving entry:', error);
+        }
+      );
   }
 }
