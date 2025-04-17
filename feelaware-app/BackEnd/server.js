@@ -1,3 +1,5 @@
+require('dotenv').config();
+const { OpenAI } = require('openai');
 const express = require('express');
 const app = express();
 const port = 4000;
@@ -109,6 +111,31 @@ app.delete('/api/moods/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting mood entry:', error);
     res.status(500).send({ error: 'Failed to delete mood entry' });
+  }
+});
+
+// OpenAI v4 Setup
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+app.post('/api/decide-mood', async (req, res) => {
+  try {
+    const prompt = req.body.prompt;
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: 'You are a mood detector. The user will describe their day, and you will reply with just the mood in one word, like "Happy", "Sad", etc.' },
+        { role: 'user', content: prompt }
+      ],
+    });
+
+    const mood = response.choices[0].message.content;
+    res.json({ mood });
+  } catch (error) {
+    console.error('Error deciding mood:', error);
+    res.status(500).json({ error: 'Failed to decide mood' });
   }
 });
 

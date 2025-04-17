@@ -1,16 +1,17 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>mood-decider</ion-title>
+    <ion-title>Mood Decider</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">mood-decider</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <ion-item lines="full">
+    <ion-label position="stacked">Tell me about your day</ion-label>
+    <ion-textarea [(ngModel)]="userPrompt" placeholder="I had a long day at work..."></ion-textarea>
+  </ion-item>
+
+  <ion-button expand="block" (click)="decideMood()">Decide my feeling!</ion-button>
 </ion-content>
