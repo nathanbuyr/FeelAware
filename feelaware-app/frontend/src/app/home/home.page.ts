@@ -53,7 +53,7 @@ export class HomePage {
   async thankUser(mood: any) {
     const thankYou = await this.alertCtrl.create({
       header: `Thanks for checking in 🙇‍♂️`,
-      message: `You selected <strong>${mood.label}</strong>.`,
+      message: `You selected ${mood.label}.`,
       buttons: [
         {
           text: 'Check Entries',

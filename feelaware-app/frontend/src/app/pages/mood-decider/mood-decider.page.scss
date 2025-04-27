@@ -13,11 +13,16 @@ ion-content {
   padding: 16px;
 }
 
+h1{
+  color: black;
+}
+
 textarea,
 ion-textarea {
   width: 100%;
   max-width: 500px;
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  
 }
 
 ion-button {
