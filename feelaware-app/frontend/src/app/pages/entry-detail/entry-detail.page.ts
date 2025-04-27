@@ -22,25 +22,11 @@ export class EntryDetailPage {
     const nav = this.router.getCurrentNavigation();
     this.entry = nav?.extras.state?.['entry'] || {};
     this.reflection = this.entry.reflection || '';
+    this.imagePreview = this.entry.image || null;
   }
+  
 
-  ngOnInit() {
-    // Fetch the entry details by ID (assuming it's passed as a route param)
-    const entryId = this.route.snapshot.paramMap.get('id');
-    if (entryId) {
-      this.http.get(`http://localhost:4000/api/moods/${entryId}`).subscribe(
-        (response: any) => {
-          this.entry = response.entry;
-          this.reflection = this.entry.reflection;
-          // If there is already an image, display it
-          this.imagePreview = this.entry.image || null;  // If image is already saved, set it as preview
-        },
-        (error) => {
-          console.error('Error fetching entry:', error);
-        }
-      );
-    }
-  }
+  
 
   saveEntry() {
     // If an image is selected, create a FormData object to send the file to the backend
@@ -94,6 +80,7 @@ export class EntryDetailPage {
     }
   }
   
+
   // Handle file selection
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
