@@ -8,27 +8,48 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <h2>{{ entry.date }}</h2>
-  <p>Mood: {{ entry.mood }}</p>
-  <p>Reflection: {{ entry.reflection }}</p>
 
-  <ion-item lines="full">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>{{ entry.date }}</ion-card-subtitle>
+      <ion-card-title>{{ entry.mood }}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p *ngIf="entry.reflection"><strong>Reflection:</strong> {{ entry.reflection }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-item lines="full" class="input-item">
     <ion-label position="stacked">Write about your day</ion-label>
-    <ion-textarea [(ngModel)]="reflection" placeholder="It was a good day because..."></ion-textarea>
+    <ion-textarea
+      [(ngModel)]="reflection"
+      placeholder="It was a good day because...">
+    </ion-textarea>
   </ion-item>
 
-  <ion-item lines="full">
+  <ion-item lines="full" class="input-item">
     <ion-label position="stacked">Upload an Image</ion-label>
     <input type="file" (change)="onFileSelected($event)" />
   </ion-item>
 
-  <!-- Display selected image immediately -->
-  <div *ngIf="imagePreview">
-    <img [src]="imagePreview" alt="Image Preview" style="max-width: 100%; height: auto;" />
+  <ion-item lines="full" class="input-item">
+    <ion-label position="stacked">Image Caption</ion-label>
+    <ion-input
+      [(ngModel)]="imageCaption"
+      placeholder="Enter a caption for your image...">
+    </ion-input>
+  </ion-item>
+
+  <div *ngIf="imagePreview" class="image-preview-container">
+    <img [src]="imagePreview" alt="Image Preview" />
+    <p *ngIf="imageCaption" class="image-caption">{{ imageCaption }}</p>
   </div>
 
-  <ion-button expand="block" (click)="saveEntry()">Save</ion-button>
+  <ion-button expand="block" shape="round" (click)="saveEntry()">Save</ion-button>
 
-  <!-- Delete button -->
-  <ion-button expand="block" color="danger" (click)="deleteEntry(entry._id)">Delete Entry</ion-button>
+  <ion-button expand="block" color="danger" shape="round" (click)="deleteEntry(entry._id)">
+    Delete Entry
+  </ion-button>
+
 </ion-content>

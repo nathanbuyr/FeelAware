@@ -1,0 +1,21 @@
+.image-preview-container {
+  text-align: center;
+  margin-top: 16px;
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .image-caption {
+    font-style: italic;
+    margin-top: 8px;
+    color: #666;
+  }
+}
+
+.input-item {
+  margin-bottom: 16px;
+}

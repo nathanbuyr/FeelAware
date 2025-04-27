@@ -16,16 +16,23 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-list>
-    <ion-item 
-      *ngFor="let entry of moodLogs" 
+
+  <div class="log-list">
+    <ion-card 
+      *ngFor="let entry of moodLogs"
       button 
-      detail
-      (click)="openLogDetail(entry)">
-      <ion-label>
-        <h2>{{ entry.date }}</h2>
-        <p>{{ entry.mood }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+      (click)="openLogDetail(entry)"
+      class="log-card"
+    >
+      <ion-card-header>
+        <ion-card-title>{{ entry.date }}</ion-card-title>
+        <ion-card-subtitle>{{ entry.mood }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content *ngIf="entry.reflection">
+        <p>{{ entry.reflection | slice:0:80 }}{{ entry.reflection.length > 80 ? '...' : '' }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
 </ion-content>

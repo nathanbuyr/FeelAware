@@ -33,7 +33,7 @@ export class MoodDeciderPage {
     }).subscribe(
       async (res) => {
         const mood = res.mood;
-        await this.showAlert(`Based on your input, you're feeling: ${mood}`, mood);
+        await this.showDecisionAlert(`Based on your input, you're feeling: ${mood}`, mood);
         this.userPrompt = ''; // clear the field
       },
       async (err) => {
@@ -43,7 +43,7 @@ export class MoodDeciderPage {
     );
   }
 
-  async showAlert(message: string, mood?: string) {
+  async showDecisionAlert(message: string, mood?: string) {
     const alert = await this.alertController.create({
       header: 'Mood Decided!',
       message,
@@ -51,26 +51,22 @@ export class MoodDeciderPage {
         {
           text: 'Back to Log',
           role: 'cancel',
-          cssClass: 'danger-button',
           handler: () => {
             this.router.navigate(['/log']);
           },
         },
         {
           text: 'Retry',
-          cssClass: 'warning-button',
           handler: () => {
-            this.userPrompt = ''; // Clear the prompt to try again
+            this.userPrompt = '';
           },
         },
         ...(mood
           ? [
               {
                 text: 'Yes, Save it!',
-                cssClass: 'success-button',
                 handler: () => {
-                  this.router.navigate(['/log']); // navigate first
-                  this.saveMood(mood);             // then save in the background
+                  this.saveMood(mood);
                 },
               },
             ]
@@ -81,30 +77,46 @@ export class MoodDeciderPage {
     await alert.present();
   }
 
-  saveMood(mood: string) {
+  async showAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Notice',
+      message,
+      buttons: ['OK'],
+    });
+
+    await alert.present();
+  }
+
+  async saveMood(mood: string) {
     const date = new Date().toISOString().split('T')[0];
     this.http.post('http://localhost:4000/api/moods', { date, mood }).subscribe(
-      (response) => {
-        console.log('Mood saved successfully:', response);
-        this.presentToast('Mood saved successfully! 🙌');
-        this.router.navigate(['/log'], { queryParams: { refresh: 'true' } });
+      async () => {
+        console.log('Mood saved successfully');
+        await this.showSuccessAlert();
       },
-      (error) => {
+      async (error) => {
         console.error('Error saving mood:', error);
-        this.presentToast('Error saving mood 😢');
+        await this.showAlert('Error saving mood 😢');
       }
     );
   }
 
-  async presentToast(message: string) {
-  const toast = document.createElement('ion-toast');
-  toast.message = message;
-  toast.duration = 2000;
-  toast.color = 'success';
-  document.body.appendChild(toast);
-  await toast.present();
-}
+  async showSuccessAlert() {
+    const alert = await this.alertController.create({
+      header: 'Success!',
+      message: 'Your mood has been saved! 🙌',
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+            this.router.navigate(['/log'], { queryParams: { refresh: 'true' } });
+          },
+        },
+      ],
+    });
 
+    await alert.present();
+  }
 
   segmentChanged(event: any) {
     const selected = event.detail.value;

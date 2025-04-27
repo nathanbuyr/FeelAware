@@ -1,27 +1,32 @@
-ion-segment {
-  margin-top: 8px;
-  --background: gray; /* Soft light blue background */
-  border-radius: 10px;
-  padding: 4px;
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; // space between cards
 }
 
-ion-segment-button {
-  --color-checked: white; /* Text color when selected */
-  --background-checked: #4CAF50; /* Green background when selected */
-  --border-radius: 8px;
-  font-weight: bold;
-  font-family: 'Balsamiq Sans', sans-serif;
-  color: black; /* Default text color */
-  transition: background-color 0.3s ease;
-}
+.log-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
 
-ion-segment-button::part(indicator-background) {
-  background: transparent; /* Remove weird default indicator */
-}
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
 
-ion-toolbar {
-  --background: gray;
+  ion-card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  ion-card-subtitle {
+    font-size: 1rem;
+    color: #666;
+    margin-top: 4px;
+  }
+
+  ion-card-content p {
+    color: #444;
+    font-size: 0.95rem;
+    margin-top: 8px;
+  }
 }

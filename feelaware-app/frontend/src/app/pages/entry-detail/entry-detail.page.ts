@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+
 @Component({
   selector: 'app-entry-detail',
   standalone: true,
@@ -17,12 +18,16 @@ export class EntryDetailPage {
   reflection: string = '';
   imagePreview: string | ArrayBuffer | null = null; // This will hold the image preview URL
   selectedFile: File | null = null;
+  imageCaption: string = '';
+
   
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient) {
     const nav = this.router.getCurrentNavigation();
     this.entry = nav?.extras.state?.['entry'] || {};
     this.reflection = this.entry.reflection || '';
     this.imagePreview = this.entry.image || null;
+    this.imageCaption = this.entry.imageCaption || '';
+
   }
   
 
@@ -43,7 +48,8 @@ export class EntryDetailPage {
           const updatedEntry = { 
             ...this.entry, 
             reflection: this.reflection, 
-            image: imageUrl 
+            image: imageUrl,
+            imageCaption: this.imageCaption
           };
   
           // Save the updated entry (with the reflection and image)
@@ -65,7 +71,8 @@ export class EntryDetailPage {
       // If no image was selected, just save the entry without the image
       const updatedEntry = { 
         ...this.entry, 
-        reflection: this.reflection 
+        reflection: this.reflection,
+        imageCaption: this.imageCaption
       };
   
       this.http.put(`http://localhost:4000/api/moods/${this.entry._id}`, updatedEntry)

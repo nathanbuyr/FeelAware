@@ -27,6 +27,7 @@ const moodSchema = new mongoose.Schema({
   mood: { type: String, required: true },
   reflection: { type: String, default: '' },
   image: { type: String, default: '' }, // To store the image URL
+  imageCaption: { type: String, default: '' }// To store the image caption
 });
 
 const MoodEntry = mongoose.model('MoodEntry', moodSchema);
@@ -83,10 +84,10 @@ app.get('/api/moods', async (req, res) => {
 // PUT route to update a mood entry
 app.put('/api/moods/:id', async (req, res) => {
   try {
-    const { reflection, image } = req.body;
+    const { reflection, image, imageCaption } = req.body;
     const updatedEntry = await MoodEntry.findByIdAndUpdate(
       req.params.id,
-      { reflection, image }, // Update reflection and image
+      { reflection, image, imageCaption }, // Update reflection and image
       { new: true }
     );
     if (updatedEntry) {
