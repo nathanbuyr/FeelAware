@@ -17,8 +17,18 @@
     <ion-textarea [(ngModel)]="reflection" placeholder="It was a good day because..."></ion-textarea>
   </ion-item>
 
+  <ion-item lines="full">
+    <ion-label position="stacked">Upload an Image</ion-label>
+    <input type="file" (change)="onFileSelected($event)" />
+  </ion-item>
+
+  <!-- Display selected image immediately -->
+  <div *ngIf="imagePreview">
+    <img [src]="imagePreview" alt="Image Preview" style="max-width: 100%; height: auto;" />
+  </div>
+
   <ion-button expand="block" (click)="saveEntry()">Save</ion-button>
 
   <!-- Delete button -->
-  <ion-button expand="block" color="danger" (click)="deleteEntry(entry._id)">Delete Entry</ion-button> 
+  <ion-button expand="block" color="danger" (click)="deleteEntry(entry._id)">Delete Entry</ion-button>
 </ion-content>

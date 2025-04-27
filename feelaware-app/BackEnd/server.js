@@ -1,28 +1,19 @@
 require('dotenv').config();
 const { OpenAI } = require('openai');
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const app = express();
 const port = 4000;
 
-const cors = require('cors');
 app.use(cors());
-
-// Allow communication between front-end and back-end
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
-// Body Parsing
-const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const mongoose = require('mongoose');
-
-// Connect to MongoDB
+// MongoDB Connection
 mongoose.connect('mongodb+srv://admin:admin@feelawaredb.mubb5ey.mongodb.net/?retryWrites=true&w=majority&appName=FeelAwareDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -30,17 +21,42 @@ mongoose.connect('mongodb+srv://admin:admin@feelawaredb.mubb5ey.mongodb.net/?ret
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.log('MongoDB connection error: ', err));
 
-// Define Schema for Mood Entry
+// Mood Schema
 const moodSchema = new mongoose.Schema({
   date: { type: String, required: true },
   mood: { type: String, required: true },
   reflection: { type: String, default: '' },
+  image: { type: String, default: '' }, // To store the image URL
 });
 
-// Data model for Mood Entries
 const MoodEntry = mongoose.model('MoodEntry', moodSchema);
 
-// POST route to save a new mood entry
+// Body Parsing Middleware
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+// OpenAI Setup
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Image upload setup with Multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './uploads'); // Folder for images
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // File naming to avoid duplicates
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// POST route to create a new mood entry
 app.post('/api/moods', async (req, res) => {
   try {
     const { date, mood } = req.body;
@@ -53,19 +69,6 @@ app.post('/api/moods', async (req, res) => {
   }
 });
 
-app.post('/api/moods', async (req, res) => {
-  try {
-    const { date, mood } = req.body; // Get date and mood from the request body
-    const newMoodEntry = new MoodEntry({ date, mood }); // Create a new mood entry
-    await newMoodEntry.save(); // Save the entry to MongoDB
-    res.status(201).json({ message: 'Mood entry created successfully', entry: newMoodEntry }); // Send success response
-  } catch (error) {
-    console.error('Error creating mood entry:', error);
-    res.status(500).json({ error: 'Failed to create mood entry' }); // Send error response
-  }
-});
-
-
 // GET route to fetch all mood entries
 app.get('/api/moods', async (req, res) => {
   try {
@@ -77,14 +80,13 @@ app.get('/api/moods', async (req, res) => {
   }
 });
 
-// PUT route to update a mood entry by ID
+// PUT route to update a mood entry
 app.put('/api/moods/:id', async (req, res) => {
   try {
-    const moodId = req.params.id;
-    const { reflection } = req.body;
+    const { reflection, image } = req.body;
     const updatedEntry = await MoodEntry.findByIdAndUpdate(
-      moodId,
-      { reflection },
+      req.params.id,
+      { reflection, image }, // Update reflection and image
       { new: true }
     );
     if (updatedEntry) {
@@ -98,27 +100,22 @@ app.put('/api/moods/:id', async (req, res) => {
   }
 });
 
-// DELETE route to delete a mood entry by ID
+// DELETE route to delete a mood entry
 app.delete('/api/moods/:id', async (req, res) => {
   try {
-    const moodId = req.params.id;
-    const deletedMood = await MoodEntry.findByIdAndDelete(moodId);
+    const deletedMood = await MoodEntry.findByIdAndDelete(req.params.id);
     if (deletedMood) {
-      res.status(200).send({ message: 'Mood deleted successfully', mood: deletedMood });
+      res.status(200).json({ message: 'Mood entry deleted successfully', mood: deletedMood });
     } else {
-      res.status(404).send({ error: 'Mood not found' });
+      res.status(404).json({ error: 'Mood entry not found' });
     }
   } catch (error) {
-    console.error('Error deleting mood:', error);
-    res.status(500).send({ error: 'Failed to delete mood' });
+    console.error('Error deleting mood entry:', error);
+    res.status(500).json({ error: 'Failed to delete mood entry' });
   }
 });
 
-// OpenAI v4 Setup
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
+// POST route to decide the mood using OpenAI
 app.post('/api/decide-mood', async (req, res) => {
   try {
     const prompt = req.body.prompt;
@@ -138,6 +135,19 @@ app.post('/api/decide-mood', async (req, res) => {
     res.status(500).json({ error: 'Failed to decide mood' });
   }
 });
+
+// POST route to handle image upload
+app.post('/api/upload', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded');
+  }
+
+  const imageUrl = `http://localhost:4000/uploads/${req.file.filename}`; // URL to access the uploaded image
+  res.json({ imageUrl }); // Send back the image URL
+});
+
+// Serve uploaded images statically (for development)
+app.use('/uploads', express.static('uploads'));
 
 // Start the server
 app.listen(port, () => {
