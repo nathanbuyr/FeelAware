@@ -23,15 +23,25 @@ export class LogPage implements OnInit, OnDestroy {
   ngOnInit() {
     // Load initially
     this.loadMoodEntries();
-
+  
     // Reload when navigating back to this page
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        if (event.urlAfterRedirects === '/log') {
-          this.loadMoodEntries();
+        if (event.urlAfterRedirects.startsWith('/log')) {
+          // Check if URL has ?refresh=true
+          const url = new URL(window.location.href);
+          const refresh = url.searchParams.get('refresh');
+  
+          if (refresh === 'true') {
+            this.loadMoodEntries();
+          }
         }
       });
+  }
+
+  ionViewWillEnter() {
+    this.loadMoodEntries();
   }
 
   ngOnDestroy() {
@@ -67,5 +77,12 @@ export class LogPage implements OnInit, OnDestroy {
 
   openLogDetail(entry: any) {
     this.router.navigate(['/entry-detail'], { state: { entry } });
+  }
+
+  segmentChanged(event: any) {
+    const selected = event.detail.value;
+    if (selected === 'write') {
+      this.router.navigate(['/mood-decider']);
+    }
   }
 }

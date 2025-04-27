@@ -3,7 +3,15 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Mood Log</ion-title>
+
+    <ion-segment value="diary" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="diary">
+        <ion-label>Diary</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="write">
+        <ion-label>Write</ion-label>
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
 

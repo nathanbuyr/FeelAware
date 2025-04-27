@@ -69,8 +69,8 @@ export class MoodDeciderPage {
                 text: 'Yes, Save it!',
                 cssClass: 'success-button',
                 handler: () => {
-                  this.saveMood(mood);
-                  this.router.navigate(['/log']); // Navigate to the log page after saving
+                  this.router.navigate(['/log']); // navigate first
+                  this.saveMood(mood);             // then save in the background
                 },
               },
             ]
@@ -85,11 +85,31 @@ export class MoodDeciderPage {
     const date = new Date().toISOString().split('T')[0];
     this.http.post('http://localhost:4000/api/moods', { date, mood }).subscribe(
       (response) => {
-        console.log('Mood saved:', response);
+        console.log('Mood saved successfully:', response);
+        this.presentToast('Mood saved successfully! 🙌');
+        this.router.navigate(['/log'], { queryParams: { refresh: 'true' } });
       },
       (error) => {
         console.error('Error saving mood:', error);
+        this.presentToast('Error saving mood 😢');
       }
     );
+  }
+
+  async presentToast(message: string) {
+  const toast = document.createElement('ion-toast');
+  toast.message = message;
+  toast.duration = 2000;
+  toast.color = 'success';
+  document.body.appendChild(toast);
+  await toast.present();
+}
+
+
+  segmentChanged(event: any) {
+    const selected = event.detail.value;
+    if (selected === 'diary') {
+      this.router.navigate(['/log']);
+    }
   }
 }

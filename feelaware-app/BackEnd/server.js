@@ -102,15 +102,15 @@ app.put('/api/moods/:id', async (req, res) => {
 app.delete('/api/moods/:id', async (req, res) => {
   try {
     const moodId = req.params.id;
-    const deletedEntry = await MoodEntry.findByIdAndDelete(moodId);
-    if (deletedEntry) {
-      res.status(200).send({ message: 'Mood entry deleted successfully', entry: deletedEntry });
+    const deletedMood = await MoodEntry.findByIdAndDelete(moodId);
+    if (deletedMood) {
+      res.status(200).send({ message: 'Mood deleted successfully', mood: deletedMood });
     } else {
-      res.status(404).send({ error: 'Mood entry not found' });
+      res.status(404).send({ error: 'Mood not found' });
     }
   } catch (error) {
-    console.error('Error deleting mood entry:', error);
-    res.status(500).send({ error: 'Failed to delete mood entry' });
+    console.error('Error deleting mood:', error);
+    res.status(500).send({ error: 'Failed to delete mood' });
   }
 });
 
@@ -126,7 +126,7 @@ app.post('/api/decide-mood', async (req, res) => {
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
-        { role: 'system', content: 'You are a mood detector. The user will describe their day, and you will reply with just the mood in one word, like "Happy", "Sad", etc.' },
+        { role: 'system', content: 'You are a mood detector. The user will describe their day, and you will reply with just the mood in one word, like "Happy", "Sad", etc., Make sure you add a corresponding emoji to go along with the chosen feeling' },
         { role: 'user', content: prompt }
       ],
     });

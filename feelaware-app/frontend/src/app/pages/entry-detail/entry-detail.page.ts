@@ -36,4 +36,16 @@ export class EntryDetailPage {
         }
       );
   }
+
+  deleteEntry(entryId: string) {
+    this.http.delete(`http://localhost:4000/api/moods/${entryId}`).subscribe(
+      (response) => {
+        console.log('Mood deleted successfully:', response);
+        this.router.navigate(['/log']); // Navigate back to the log page after deletion
+      },
+      (error) => {
+        console.error('Error deleting mood:', error);
+      }
+    );
+  }
 }
