@@ -70,5 +70,6 @@ The frontend will be available at [http://localhost:4200](http://localhost:4200)
 
 ## Notes:
 - Ensure you have a `.env` file in the **backend** folder with your OpenAI API key and MongoDB connection string.
+- I used my own OpenAI key for this project but I cannot provide it here as it will automatically be found and turned off. Please contact me if you want to use my OpenAI key
 - The app is designed for both desktop and mobile usage, but mobile testing may require additional configuration (e.g., running on a real device for some features).
 ---
