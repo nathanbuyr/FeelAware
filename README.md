@@ -20,7 +20,7 @@ Follow these steps to run the app locally:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/feelaware-app.git
+git clone https://github.com/nathanbuyr/FeelAware
 cd feelaware-app
 ```
 
